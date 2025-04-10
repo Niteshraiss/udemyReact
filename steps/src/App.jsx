@@ -12,7 +12,7 @@ function App() {
     console.log(step)
   }
   function handleNext() {
-    if (step < 3) 
+    if (step < 3)
       setStep(prev => prev + 1)
     console.log(step)
   }
@@ -23,10 +23,10 @@ function App() {
   ];
   return (
     <>
-        <button className="close" onClick={()=>{
-          setIsOpen(pre=>!pre)
-        }}>&times;</button>
-      {isOpen &&(//if true return it expression
+      <button className="close" onClick={() => {
+        setIsOpen(pre => !pre)
+      }}>&times;</button>
+      {isOpen && (//if true return it expression
         <div className='steps'>
           <div className="numbers">
             <div className={step == 1 ? 'active' : ''}>1</div>
