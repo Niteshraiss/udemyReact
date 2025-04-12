@@ -1,33 +1,21 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
-import './App.css'
+import { Form } from './components/Form'
+import { PackingList } from './components/PackingList'
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  const initialItems = [
+    { id: 1, description: "Passports", quantity: 2, packed: false },
+    { id: 2, description: "Socks", quantity: 12, packed: false },
+    { id: 3, description: "Charger", quantity: 1, packed: true },
+    { id: 4, description: "Laptop", quantity: 1, packed: false },
+    { id: 5, description: "Dress", quantity: 1, packed: false },
+  ];
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Form />
+      <PackingList item={initialItems} />
     </>
   )
 }
