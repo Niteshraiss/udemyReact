@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 
-export const Form = () => {
+export const Form = ({ onAddItems}) => {
     const [desc, setDesc] = useState("");
     const [quantity, setQuantity] = useState(1);
 
     function handleSubmit(e) {
         e.preventDefault();
-        if(!desc) return;
-        const newItem={desc,quantity,packed:false,id:Date.now()}
-        console.log(newItem)
+        if (!desc) return;
+        const newItem = { desc, quantity, packed: false, id: Date.now() }
+        onAddItems(newItem)
         setDesc("")
         setQuantity(1)
     }

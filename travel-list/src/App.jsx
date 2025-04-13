@@ -1,21 +1,33 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import { Form } from './components/Form'
 import { PackingList } from './components/PackingList'
+import { Stats } from './components/Stats.jsx'
 
 function App() {
-  const initialItems = [
-    { id: 1, description: "Passports", quantity: 2, packed: false },
-    { id: 2, description: "Socks", quantity: 12, packed: false },
-    { id: 3, description: "Charger", quantity: 1, packed: true },
-    { id: 4, description: "Laptop", quantity: 1, packed: false },
-    { id: 5, description: "Dress", quantity: 1, packed: false },
-  ];
+  const [items, setItems] = useState([]);
+
+  function handleDeleteItem(id) {
+    setItems(items => items.filter(item => item.id !== id))
+  }
+  function handleAddItems(item) {
+    setItems(pre => [...pre, item]);
+  }
+  function handleToogleItem(id) {
+    setItems(items => items.map(item => item.id === id ? { ...item, packed: !item.packed } : item))
+  }
+  function clearAll() {
+    if (items.length > 0) {
+      const confirmed = window.confirm("Are you sure you want to delete all items?");
+      if (confirmed) setItems([]);
+    } else {
+      alert("Nothing to delete")
+    }
+  }
   return (
     <>
-      <Form />
-      <PackingList item={initialItems} />
+      <Form onAddItems={handleAddItems} />
+      <PackingList items={items} onDeleteItem={handleDeleteItem} onToogleItems={handleToogleItem} onClear={clearAll} />
+      <Stats items={items} />
     </>
   )
 }
