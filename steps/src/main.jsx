@@ -6,6 +6,6 @@ import Time from './Time.jsx'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />
-    <Time/>
+    {/* <Time/> */}
   </StrictMode>,
 )

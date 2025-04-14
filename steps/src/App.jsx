@@ -1,20 +1,19 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
-
+import { Buttons } from './Buttons'
+import { StepMessage } from './StepMessage'
 function App() {
   const [step, setStep] = useState(1)
   const [isOpen, setIsOpen] = useState(true)
 
   function handlePrevious() {
     if (step > 1) setStep(prev => prev - 1);
-    console.log(step)
+
   }
   function handleNext() {
     if (step < 3)
       setStep(prev => prev + 1)
-    console.log(step)
+
   }
   const messages = [
     "Learn React ⚛️",
@@ -33,16 +32,19 @@ function App() {
             <div className={step == 2 ? 'active' : ''}>2</div>
             <div className={step == 3 ? 'active' : ''}>3</div>
           </div>
-          <p className="message">
-            Step {step}: {messages[step - 1]}
-          </p>
+
+          <StepMessage step={step}>
+            {messages[step - 1]}
+            <div className="buttons">
+              <Buttons bgColor='#e7e7ef' textColor='#333' onClick={() => alert(`Let's talk about ${messages[step - 1]}`)} >
+                Learn More
+              </Buttons>
+            </div>
+          </StepMessage>
           <div className="buttons">
-            <button style={{ backgroundColor: '#7950f2', color: '#fff' }} onClick={() => { handlePrevious() }}>
-              Previous
-            </button>
-            <button style={{ backgroundColor: '#7950f2', color: '#fff' }} onClick={() => { handleNext() }}>
-              Next
-            </button>
+            {/* using children prop */}
+            <Buttons bgColor='#7950f2' textColor='#fff' onClick={handlePrevious} ><span>⏮</span> Previous</Buttons>
+            <Buttons bgColor='#7950f2' textColor='#fff' onClick={handleNext}>Next <span>⏭ </span></Buttons>
           </div>
         </div>
       )}
