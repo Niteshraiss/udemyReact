@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 
-export const AccordianItem = ({ num, title, text }) => {
-    const [isOpen, setIsOpen] = useState(false)
+export const AccordianItem = ({ num, title, open,onOpen,children }) => {
+    // const [isOpen, setIsOpen] = useState(false)
+    const isOpen= num ==open
     function openAccordian() {
-        setIsOpen(pre => !pre)
+       onOpen(isOpen ? null :num)
     }
     return (
         <>
@@ -13,7 +14,7 @@ export const AccordianItem = ({ num, title, text }) => {
                 <p className='icon'>{isOpen ? '-' : '+'}</p>
                 {isOpen && (
                     <div className="content-box">
-                        {text}
+                        {children}
                     </div>
                 )
                 }

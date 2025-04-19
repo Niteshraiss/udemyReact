@@ -70,3 +70,16 @@ body {
 .open .title {
   color: #087f5b;
 }
+.flex{
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  row-gap: 1rem;
+  min-width: 500px;
+  font-size: 1.5rem;
+}
+input{
+  padding: 10px;
+}
