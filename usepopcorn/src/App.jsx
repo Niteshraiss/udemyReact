@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { Navbar } from './Components/Navbar/Navbar'
 import Body from './Components/Body/Body'
@@ -9,57 +9,72 @@ import WatchedBox from './Components/Body/Watched/WatchedBox';
 import MovieList from './Components/Body/Movie/MovieList';
 import Summary from './Components/Body/Watched/Summary';
 import WatchedList from './Components/Body/Watched/WatchedList';
+import Loader from './Components/Body/Loader';
+import ErrorMessage from './Components/Body/ErrorMessage';
+import { func } from 'prop-types';
+import MovieDetails from './Components/Body/Movie/MovieDetails';
 
 
 function App() {
-  const tempMovieData = [
-    {
-      imdbID: "tt1375666",
-      Title: "Inception",
-      Year: "2010",
-      Poster:
-        "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
-    },
-    {
-      imdbID: "tt0133093",
-      Title: "The Matrix",
-      Year: "1999",
-      Poster:
-        "https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg",
-    },
-    {
-      imdbID: "tt6751668",
-      Title: "Parasite",
-      Year: "2019",
-      Poster:
-        "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_SX300.jpg",
-    },
-  ];
+  const KEY = '51aa3590'
+  const [movies, setMovies] = useState();
+  const [watched, setWatched] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('')
+  const [query, setQuery] = useState("");
+  const [selectedId, setSelectedId] = useState("null")
 
-  const tempWatchedData = [
-    {
-      imdbID: "tt1375666",
-      Title: "Inception",
-      Year: "2010",
-      Poster:
-        "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_SX300.jpg",
-      runtime: 148,
-      imdbRating: 8.8,
-      userRating: 10,
-    },
-    {
-      imdbID: "tt0088763",
-      Title: "Back to the Future",
-      Year: "1985",
-      Poster:
-        "https://m.media-amazon.com/images/M/MV5BZmU0M2Y1OGUtZjIxNi00ZjBkLTg1MjgtOWIyNThiZWIwYjRiXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg",
-      runtime: 116,
-      imdbRating: 8.5,
-      userRating: 9,
-    },
-  ];
-  const [movies, setMovies] = useState(tempMovieData);
-  const [watched, setWatched] = useState(tempWatchedData);
+
+  useEffect(
+    function () {
+      const controller = new AbortController()
+      async function fetchMovies() {
+        try {
+          setIsLoading(true);
+          setError('');
+          const res = await fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+            , { signal: controller.signal })
+
+          if (!res.ok) throw new Error("Something went wrong with fetchng movies")
+          const data = await res.json()
+          if (data.Response === 'False') throw new Error("Movie not found")
+          setMovies(data.Search)
+        setError("")
+        } catch (err) {
+          if (err.name !== "AbortError") {
+            setError(err.message)
+          }
+        } finally {
+          setIsLoading(false)
+        }
+      }
+      if (query.length < 3) {
+        setMovies([])
+        setWatched([])
+        setError('')
+        return;
+      }
+      handleCloseMovie()
+      fetchMovies();
+      return function () {
+        controller.abort();
+      }
+    }, [query])
+
+  function handleSelectMove(id) {
+    setSelectedId(selectedId => id == selectedId ? null : id)
+  }
+
+  function handleCloseMovie() {
+    setSelectedId(null)
+  }
+
+  function handleAddWatched(movie) {
+    setWatched(watched => [...watched, movie])
+  }
+  function handleDeleteWatched(id) {
+    setWatched(watched => watched.filter((movie) => movie.imdbID !== id))
+  }
   return (
     <>
       <div>
@@ -67,16 +82,31 @@ function App() {
         {/* Component composition method  and are of two types*/}
         {/* 1) Composition Using children */}
         <Navbar>
-          <Search />
+          <Search query={query} setQuery={setQuery} />
           <NavResults movies={movies} />
         </Navbar>
         <Body>
           <List>
-            <MovieList movies={movies} />
+            {isLoading && <Loader />}
+            {!isLoading && !error && <MovieList movies={movies} onSelectMovie={handleSelectMove} />}
+            {error && <ErrorMessage message={error} />}
           </List>
           <List>
-            <Summary watched={watched} />
-            <WatchedList watched={watched} />
+            {
+              selectedId ?
+                <MovieDetails
+                  selectedId={selectedId}
+                  onCloseMovie={handleCloseMovie}
+                  KEY={KEY}
+                  onAddWatched={handleAddWatched}
+                  watched={watched}
+                />
+                :
+                <>
+                  <Summary watched={watched} />
+                  <WatchedList watched={watched} onDeleteWatched={handleDeleteWatched} />
+                </>
+            }
           </List>
         </Body>
 

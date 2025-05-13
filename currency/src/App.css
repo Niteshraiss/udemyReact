@@ -1,0 +1,23 @@
+#root {
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  font-size: 18px;
+  font-family: sans-serif;
+}
+.flex{
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+  gap: 0.5em;
+}
+
+.input{
+  padding: 10px;
+  font-size: 18px;
+  border-radius: 15rem;
+  outline: none;
+  border: 1px solid black;
+}
